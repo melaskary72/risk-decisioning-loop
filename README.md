@@ -93,42 +93,42 @@ per-typology breakdown and the miss list, is committed in
 | Cost of this run | **$0.76** | < $1.00 |
 | Cost per 1,000 agent decisions | **$28.19** | - |
 
-**5/5 typologies detected** — card testing, account takeover, structuring,
+**5/5 typologies detected**: card testing, account takeover, structuring,
 velocity spike and first-party abuse each produced at least one transaction that
 did not silently clear.
 
-**26/32 fraud transactions not auto-approved** — the six misses are the honest
+**26/32 fraud transactions not auto-approved**: the six misses are the honest
 part. Five are the opening authorisations of the card-testing burst, scored
 before any velocity rule has the history to fire; a $0.73 charge at an online
 merchant is not anomalous on its own. The sixth is a genuine model error, the
 second transaction of a dormant-account spree, which the agent approved on
 correct reasoning about evidence that was not yet damning.
 
-**99.10% of fraud value not auto-approved** — the six missed transactions total
+**99.10% of fraud value not auto-approved**: the six missed transactions total
 $650.91 against $72,142 of seeded fraud, because the misses are structurally the
 cheap ones and the expensive escalation behind them is declined. This is the
 number that matches how fraud loss is actually counted.
 
-**0 false-positive declines** — no legitimate transaction was declined. This is
+**0 false-positive declines**: no legitimate transaction was declined. This is
 the metric the design protects hardest: a false decline is a real customer
 turned away, and it is not recoverable by an analyst later.
 
-**3 legitimate transactions sent to review (0.64%)** — the cost of that caution,
+**3 legitimate transactions sent to review (0.64%)**: the cost of that caution,
 reported rather than hidden: a $9,500 tuition payment, a new account's first
 big-ticket purchase, and a seasonal customer returning after a quiet period.
 Review is an analyst-minute spent, not a customer lost.
 
-**7/7 AML transactions routed to a human, 0 auto-declined** — every transaction
+**7/7 AML transactions routed to a human, 0 auto-declined**: every transaction
 that fired AML-001 or AML-002 reached a person, including the legitimate tuition
 payment and including the six structuring transactions that scored 90 and would
 otherwise have been auto-declined.
 
-**26/27 agent verdicts safe for the label (96.3%)** — "safe" means the verdict
+**26/27 agent verdicts safe for the label (96.3%)**: "safe" means the verdict
 did not do the unsafe thing for that label: fraud not approved, legitimate not
 declined. On the stricter reading (fraud declined, legitimate approved, review
 where policy mandates it) the agent scores 21/27.
 
-**21.2 s median agent decision, $0.76 for the run** — slow and expensive per
+**21.2 s median agent decision, $0.76 for the run**: slow and expensive per
 decision, which is exactly why only 5.4% of the stream is allowed to reach it.
 Sending all 503 transactions to the agent would have cost about $14.18; banding
 first cost $0.76 for the same set of decisions.
@@ -148,8 +148,8 @@ first cost $0.76 for the same set of decisions.
 
 The loop degrades, it does not break. Recall drops because a heuristic cannot
 tell a dormant-account spree from a returning seasonal customer. The two
-guarantees that must not depend on a third-party API — no false-positive
-declines, and AML always to a human — both hold with the model switched off.
+guarantees that must not depend on a third-party API, no false-positive
+declines and AML always to a human, both hold with the model switched off.
 
 ---
 
@@ -167,7 +167,7 @@ one customer are one email, not six.
 - **Rules at the extremes, judgement in the middle.** 94.6% of the stream is
   decided by nine pure functions in under a millisecond, with a reason code an
   auditor can read. The model is spent only on the 5.4% where the rules are
-  genuinely ambiguous — which is the same slice a human analyst queue gets today.
+  genuinely ambiguous, which is the same slice a human analyst queue gets today.
 - **AML always routes to a human.** Any AML reason code forces the agent band
   regardless of score, and `enforce_policy` will not let an AML transaction end
   as approve or decline. Structuring is a filing question, not a decline button.
@@ -179,8 +179,8 @@ one customer are one email, not six.
   loop completes on a deterministic policy (score >= 55 becomes review) tagged
   FBK-001, and every fallback is logged. Proven by an eval that runs the whole
   stream with the key removed.
-- **The decision table is the audit trail.** Every decision — rules, agent or
-  fallback — is one row with score, band, verdict, reason codes, the narrative an
+- **The decision table is the audit trail.** Every decision (rules, agent or
+  fallback) is one row with score, band, verdict, reason codes, the narrative an
   analyst reads, latency, tokens, cost and which layer decided. There is no
   decision path that does not leave a row.
 - **Alert dedupe, because an alert nobody trusts fails the same way an
@@ -217,8 +217,8 @@ not sent. Both degrade cleanly rather than failing.
 The data is synthetic and generated by `data/generate.py`, deliberately: seeding
 the fraud myself is what makes the ground truth exact and the eval honest, in a
 way that grading against a downloaded dataset with unknown labels would not be.
-The whole thing is miniature by design — nine rules, two tools, one model call
-per ambiguous transaction, 503 transactions — and was built in an afternoon to
+The whole thing is miniature by design (nine rules, two tools, one model call
+per ambiguous transaction, 503 transactions) and was built in an afternoon to
 mirror the *shape* of production risk decisioning rather than its scale: rules
 and AI agents and human analysts making onboarding, fraud, credit and AML
 decisions together, with the numbers to say how well it worked.
